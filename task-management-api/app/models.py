@@ -85,6 +85,11 @@ class Task(db.Model):
     description = db.Column(db.Text, default='')
     status = db.Column(db.String(20), default='todo')
     priority = db.Column(db.String(20), default='medium')
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault('status', 'todo')
+        kwargs.setdefault('priority', 'medium')
+        super().__init__(**kwargs)
     due_date = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow,

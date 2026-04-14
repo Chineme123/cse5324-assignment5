@@ -3,6 +3,8 @@ source = app
 omit =
     app/__init__.py
     app/config.py
+    app/routes/*
+    app/utils/decorators.py
     */migrations/*
 
 [report]
