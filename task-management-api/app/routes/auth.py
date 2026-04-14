@@ -1,6 +1,6 @@
 """Authentication routes for register and login."""
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import create_access_token, create_refresh_token
 from app.services.auth_service import AuthService
 
@@ -20,8 +20,8 @@ def register():
             data.get('email'),
             data.get('password')
         )
-        access_token = create_access_token(identity=user.id)
-        refresh_token = create_refresh_token(identity=user.id)
+        access_token = create_access_token(identity=str(user.id))
+        refresh_token = create_refresh_token(identity=str(user.id))
         return jsonify({
             'user_id': user.id,
             'username': user.username,
@@ -43,8 +43,8 @@ def login():
     )
     if not user:
         return jsonify({'error': 'Invalid credentials'}), 401
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
     return jsonify({
         'user_id': user.id,
         'username': user.username,
@@ -57,12 +57,16 @@ def login():
 def refresh():
     """Issue a new access token from a valid refresh token."""
     from flask_jwt_extended import jwt_required, get_jwt_identity
-    from functools import wraps
 
-    @jwt_required(refresh=True)
-    def _refresh():
+    with current_app.test_request_context():
+        pass
+
+    try:
+        from flask_jwt_extended import verify_jwt_in_request
+        verify_jwt_in_request(refresh=True)
+        from flask_jwt_extended import get_jwt_identity
         current_user_id = get_jwt_identity()
-        new_token = create_access_token(identity=current_user_id)
+        new_token = create_access_token(identity=str(current_user_id))
         return jsonify({'access_token': new_token}), 200
-
-    return _refresh()
+    except Exception as e:
+        return jsonify({'error': 'Invalid refresh token'}), 401

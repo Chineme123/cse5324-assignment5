@@ -20,7 +20,7 @@ def create_task():
     valid, error = validate_task_data(data)
     if not valid:
         return jsonify({'error': error}), 400
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     task = task_service.create_task(current_user_id, data)
     return jsonify(task.to_dict()), 201
 
@@ -29,7 +29,7 @@ def create_task():
 @jwt_required()
 def get_tasks():
     """Get all tasks for the authenticated user with optional filters."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     filters = {
         'status': request.args.get('status'),
         'priority': request.args.get('priority'),
@@ -44,7 +44,7 @@ def get_tasks():
 @jwt_required()
 def get_task(task_id):
     """Get a specific task by ID."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     task = task_service.get_task_by_id(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
@@ -57,7 +57,7 @@ def get_task(task_id):
 @jwt_required()
 def update_task(task_id):
     """Update a task owned by the authenticated user."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     task = task_service.get_task_by_id(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
@@ -75,7 +75,7 @@ def update_task(task_id):
 @jwt_required()
 def delete_task(task_id):
     """Delete a task owned by the authenticated user."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     task = task_service.get_task_by_id(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
@@ -89,7 +89,7 @@ def delete_task(task_id):
 @jwt_required()
 def assign_task(task_id):
     """Assign a task to another user."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     task = task_service.get_task_by_id(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404

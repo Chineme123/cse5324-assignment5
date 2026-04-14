@@ -11,7 +11,7 @@ users_bp = Blueprint('users', __name__)
 @jwt_required()
 def get_profile():
     """Return the authenticated user's profile."""
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = User.query.get(current_user_id)
     if not user:
         return jsonify({'error': 'User not found'}), 404

@@ -20,7 +20,7 @@ class TestingConfig(Config):
     """Testing configuration using in-memory SQLite."""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
-    JWT_SECRET_KEY = 'test-jwt-secret'
+    JWT_SECRET_KEY = 'test-jwt-secret-key-long-enough-32bytes'
     WTF_CSRF_ENABLED = False
 
 
